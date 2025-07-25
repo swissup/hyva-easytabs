@@ -1,0 +1,26 @@
+<?php
+    $tabs = $block->prepareTabsData();
+    if (!$tabs) {
+        return;
+    }
+
+    $htmlId = uniqid('swissup-easytabs-');
+    $tabsLayoutType = $block->getTabsLayoutType();
+?>
+
+<div class="product info detailed">
+    <div id="<?= $htmlId ?>"
+        class="product data items <?= $tabsLayoutType ?> w-full mt-8"
+        x-data="{ activeTab: 1 }"
+    >
+        <?php if ($tabsLayoutType == 'collapsed'): ?>
+            <?= $block->assign('tabs', $tabs)->fetchView($block->getTemplateFile('layout/collapsed.phtml')); ?>
+        <?php elseif ($tabsLayoutType == 'expanded') : ?>
+            <?= $block->assign('tabs', $tabs)->fetchView($block->getTemplateFile('layout/expanded.phtml')); ?>
+        <?php elseif ($tabsLayoutType == 'accordion') : ?>
+            <?= $block->assign('tabs', $tabs)->fetchView($block->getTemplateFile('layout/accordion.phtml')); ?>
+        <?php else : ?>
+            <?= $block->assign('tabs', $tabs)->fetchView($block->getTemplateFile('layout/default.phtml')); ?>
+        <?php endif ?>
+    </div>
+</div>

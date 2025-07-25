@@ -1,0 +1,51 @@
+<style>
+.hover\:border-gray-300:hover {
+    border-bottom-color: #D1D5DB; /* Tailwind's gray-300 */
+}
+@media (min-width: 640px) {
+    .sm\:hidden {
+        display: none;
+    }
+}
+</style>
+
+<div class="tab-select sm:hidden">
+    <select 
+        class="border rounded px-4 py-2 w-full"
+        @change="activeTab = parseInt($event.target.value)"
+    >
+    <?php $index = 1; foreach ($tabs as $_tab) : ?>
+        <?php $alias = $block->escapeHtmlAttr($_tab['alias']); ?>
+        <option value="<?= $index ?>" 
+            data-alias="<?= $alias ?>"
+            :selected="activeTab === <?= $index ?>">
+            <?= /* @escapeNotVerified */ $_tab['title'] ?>
+        </option>
+    <?php $index++; endforeach; ?>
+    </select>
+</div>
+
+<div class="hidden sm:flex border-b border-gray-200">
+<?php $index = 1; foreach ($tabs as $_tab) : ?>
+    <?php $alias = $block->escapeHtmlAttr($_tab['alias']); ?>
+    <button id="tab-label-<?= $alias ?>"
+        class="py-2 px-4 font-semibold border-b-2 focus:outline-none"
+        :class="activeTab === <?= $index ?> ? 'border-primary text-primary' : 'text-gray-400 border-transparent hover:border-gray-300'"
+        @click="activeTab = <?= $index ?>"
+        type="button"
+        aria-labelledby="tab-label-<?= $alias ?>-title"
+        aria-controls="<?= $alias; ?>"
+        data-role="collapsible"
+    >
+        <?= /* @escapeNotVerified */ $_tab['title'] ?>
+    </button>
+<?php $index++; endforeach; ?>
+</div>
+
+<div class="p-4">
+<?php $index = 1; foreach ($tabs as $_tab) : ?>
+    <div id="<?= $alias ?>" data-role="content" x-show="activeTab === <?= $index ?>">
+        <?= /* @escapeNotVerified */ $_tab['is_ajax'] ? '' : $_tab['child_html'] ?>
+    </div>
+<?php $index++; endforeach; ?>
+</div>
