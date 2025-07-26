@@ -57,7 +57,11 @@ class ProductReviewPrepareLayoutAfter implements ObserverInterface
             [
                 'data' => [
                     'text' => <<<HTML
-                        <style>.product.data.items #customer-review-list > :first-child { display: none; }</style>
+                        <style>
+                            .product.data.items #customer-review-list > :first-child { display: none; }
+                            .product.data.items [id^="tab-label-"] .counter::before { content: '('; }
+                            .product.data.items [id^="tab-label-"] .counter::after { content: ')'; }
+                        </style>
                     HTML
                 ]
             ]
