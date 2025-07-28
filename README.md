@@ -12,8 +12,16 @@ composer require hyva-themes/magento2-swissup-easytbas
 
 ## Configure tabs
 
-### Review tab
+### Reviews
 
-Usnet follow blocks (you can use tab option for it):
+Unset follow blocks (you can use tab option for it):
  - `product.review.form`;
  - `review_list`.
+
+### Related products
+
+Add tab "Block html". Use follow code for the content:
+
+`{{block class="Magento\Catalog\Block\Product\View" template="Magento_Catalog::product/slider/product-slider.phtml" type="related"}}`
+
+Unset block `related`.
