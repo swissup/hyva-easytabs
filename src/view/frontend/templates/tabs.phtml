@@ -9,6 +9,11 @@
 ?>
 
 <div class="product info detailed">
+    <style>
+        #<?= $htmlId ?> #customer-review-list > :first-child { display: none; }
+        #<?= $htmlId ?> .tab-label .counter::before { content: '('; }
+        #<?= $htmlId ?> .tab-label .counter::after { content: ')'; }
+    </style>
     <div id="<?= $htmlId ?>"
         class="product data items <?= $tabsLayoutType ?> w-full mt-8"
         x-data="{ activeTab: 1 }"

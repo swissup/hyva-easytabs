@@ -51,22 +51,6 @@ class ProductReviewPrepareLayoutAfter implements ObserverInterface
             ]
         );
         $reviewList->setChild('review_list.toolbar', $pager);
-        $textBlock = $layout->createBlock(
-            \Magento\Framework\View\Element\Text::class,
-            'easytab.product.review_styles',
-            [
-                'data' => [
-                    'text' => <<<HTML
-                        <style>
-                            .product.data.items #customer-review-list > :first-child { display: none; }
-                            .product.data.items [id^="tab-label-"] .counter::before { content: '('; }
-                            .product.data.items [id^="tab-label-"] .counter::after { content: ')'; }
-                        </style>
-                    HTML
-                ]
-            ]
-        );
-        $block->setChild('review_styles', $textBlock);
         $layout->reorderChild($block->getNameInLayout(), $listBlockName, 0, false);
     }
 }

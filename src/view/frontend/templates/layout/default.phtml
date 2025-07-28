@@ -29,7 +29,7 @@
 <?php $index = 1; foreach ($tabs as $_tab) : ?>
     <?php $alias = $block->escapeHtmlAttr($_tab['alias']); ?>
     <button id="tab-label-<?= $alias ?>"
-        class="py-2 px-4 font-semibold border-b-2 focus:outline-none"
+        class="tab-label py-2 px-4 font-semibold border-b-2 focus:outline-none"
         :class="activeTab === <?= $index ?> ? 'border-primary text-primary' : 'text-gray-400 border-transparent hover:border-gray-300'"
         @click="activeTab = <?= $index ?>"
         type="button"
