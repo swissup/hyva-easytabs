@@ -25,3 +25,11 @@ Add tab "Block html". Use follow code for the content:
 `{{block class="Magento\Catalog\Block\Product\View" template="Magento_Catalog::product/slider/product-slider.phtml" type="related"}}`
 
 Unset block `related`.
+
+### Upsell
+
+Add tab "Block html". Use follow code for the content:
+
+`{{block class="Magento\Catalog\Block\Product\View" template="Magento_Catalog::product/slider/product-slider.phtml" type="upsell"}}`
+
+Unset block `upsell`.
