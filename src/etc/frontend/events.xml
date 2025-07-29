@@ -3,4 +3,7 @@
     <event name="swissup_easytabs_product_review_prepare_layout_after">
         <observer name="hyva_swissup_easytabs_review_layout_after" instance="Hyva\SwissupEasytabs\Observer\ProductReviewPrepareLayoutAfter" />
     </event>
+    <event name="catalog_controller_product_init_after">
+        <observer name="hyva_swissup_easytabs_product_init_after" instance="Hyva\SwissupEasytabs\Observer\CatalogControllerProductInitAfter" />
+    </event>
 </config>
