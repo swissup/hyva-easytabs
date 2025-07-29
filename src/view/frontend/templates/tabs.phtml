@@ -79,8 +79,9 @@
             processScripts(html) {
                 const tempDiv = document.createElement('div');
                 tempDiv.innerHTML = html;
-                const scripts = tempDiv.querySelectorAll('script');
+                const scripts = tempDiv.querySelectorAll('script:not([type="text/x-magento-init"]');
                 scripts.forEach(script => {
+                    if (script.type && script.type !== 'text/javascript') return;
                     const newScript = document.createElement('script');
                     newScript.textContent = script.textContent;
                     document.body.appendChild(newScript);
