@@ -4,7 +4,8 @@
         return;
     }
 
-    $htmlId = uniqid('swissup-easytabs-');
+    $uniqueId = uniqid();
+    $htmlId = 'swissup-easytabs-' . $uniqueId;
     $tabsLayoutType = $block->getTabsLayoutType();
     $isCollapsed = false;
     $isExpanded = false;
@@ -24,6 +25,14 @@
             $isDefault = true;
             break;
     }
+
+    $hasAjaxTabs = false;
+    foreach ($tabs as $_tab) {
+        if (!empty($_tab['is_ajax'])) {
+            $hasAjaxTabs = true;
+            break;
+        }
+    }
 ?>
 
 <div class="product info detailed">
@@ -34,13 +43,13 @@
         #<?= $htmlId ?> section.my-12 { margin-top: 0; margin-bottom: 0; }<?php if ($isDefault): ?>
         #<?= $htmlId ?> .-mb-2px { margin-bottom: -2px; }
         #<?= $htmlId ?> .hover\:border-gray-300:hover { border-color: #D1D5DB; /* Tailwind's gray-300 */ }
-        @media (min-width: 640px) {
+        <?= '@media (min-width: 640px) {' ?>
             #<?= $htmlId ?> .sm\:hidden { display: none; }
-        }<?php endif; ?>
+        <?= '}' ?><?php endif; ?>
     </style>
     <div id="<?= $htmlId ?>"
         class="product data items <?= $tabsLayoutType ?> w-full mt-8"
-        x-data="{ activeTab: 1 }"
+        x-data="swissupEasytabs<?= $uniqueId ?>"
     >
         <?php if ($isCollapsed): ?>
             <?= $block->assign('tabs', $tabs)->fetchView($block->getTemplateFile('layout/collapsed.phtml')); ?>
@@ -49,7 +58,44 @@
         <?php elseif ($isAccordion) : ?>
             <?= $block->assign('tabs', $tabs)->fetchView($block->getTemplateFile('layout/accordion.phtml')); ?>
         <?php else : ?>
-            <?= $block->assign('tabs', $tabs)->fetchView($block->getTemplateFile('layout/default.phtml')); ?>
+            <?= $block->assign('tabs', $tabs)->assign('hasAjaxTabs', $hasAjaxTabs)->fetchView($block->getTemplateFile('layout/default.phtml')); ?>
         <?php endif ?>
     </div>
 </div>
+
+<script>
+    document.addEventListener('alpine:init', () => {
+        Alpine.data('swissupEasytabs<?= $uniqueId ?>', () => ({
+            activeTab: 1<?php if ($hasAjaxTabs) :?>,
+            fetchTabContent(url) {
+                return fetch(url, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                }).then(response => response.text());
+            },
+            processScripts(html) {
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = html;
+                const scripts = tempDiv.querySelectorAll('script');
+                scripts.forEach(script => {
+                    const newScript = document.createElement('script');
+                    newScript.textContent = script.textContent;
+                    document.body.appendChild(newScript);
+                    script.remove();
+                });
+
+                return tempDiv.innerHTML;
+            },
+            async updateTabContent(tab) {
+                const tabContentElement = document.getElementById(tab.getAttribute('aria-controls'));
+                const content = await this.fetchTabContent(tab.dataset.ajaxurl);
+                const processedContent = this.processScripts(content);
+                tabContentElement.innerHTML = processedContent;
+                delete tab.dataset.ajaxurl;
+            }<?php endif; ?>
+        }));
+    });
+</script>

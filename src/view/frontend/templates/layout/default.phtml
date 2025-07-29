@@ -1,14 +1,44 @@
+<?php
+    declare(strict_types=1);
+
+    use Magento\Framework\Escaper;
+    use Magento\Framework\View\Element\Template;
+
+    /** @var Template $block */
+    /** @var Escaper $escaper */
+    /** @var array $tabs */
+    /** @var bool $hasAjaxTabs */
+
+    $loadingHtml = '';
+    if ($hasAjaxTabs) {
+        $loadingHtml = str_replace(
+            [
+                ' fixed ',
+                ' style="left'
+            ],
+            [
+                ' ',
+                ' style-off="left'
+            ],
+            $block->getLayout()->createBlock(Template::class)
+                ->setTemplate('Hyva_Theme::ui/loading.phtml')
+                ->toHtml()
+        );
+    }
+?>
+
 <div class="tab-select sm:hidden">
     <select 
         class="border rounded px-4 py-2 w-full"
-        @change="activeTab = parseInt($event.target.value)"
+        @change="activeTab = parseInt($event.target.value)<?php if ($hasAjaxTabs): ?>; const [tab] = $event.target.selectedOptions; if (tab.dataset.ajaxurl) { updateTabContent(tab); }<?php endif; ?>"
     >
     <?php $index = 1; foreach ($tabs as $_tab) : ?>
         <?php $alias = $block->escapeHtmlAttr($_tab['alias']); ?>
         <option value="<?= $index ?>" 
-            data-alias="<?= $alias ?>"
+            aria-controls="<?= $alias; ?>"
+            <?php if ($_tab['is_ajax']): ?>data-ajaxurl="<?= $escaper->escapeHtmlAttr($block->getAjaxUrl($alias)) ?>"<?php endif; ?>
             :selected="activeTab === <?= $index ?>">
-            <?= /* @escapeNotVerified */ $_tab['title'] ?>
+            <?= $block->stripTags($_tab['title']) ?>
         </option>
     <?php $index++; endforeach; ?>
     </select>
@@ -20,11 +50,11 @@
     <button id="tab-label-<?= $alias ?>"
         class="tab-label py-2 px-4 font-semibold border-b-2 focus:outline-none -mb-2px"
         :class="activeTab === <?= $index ?> ? 'border-primary text-primary' : 'text-gray-400 border-transparent hover:border-gray-300'"
-        @click="activeTab = <?= $index ?>"
+        @click="activeTab = <?= $index ?><?php if ($_tab['is_ajax']): ?>; if ($event.target.dataset.ajaxurl) { updateTabContent($event.target); }<?php endif; ?>"
         type="button"
-        aria-labelledby="tab-label-<?= $alias ?>-title"
         aria-controls="<?= $alias; ?>"
         data-role="collapsible"
+        <?php if ($_tab['is_ajax']): ?>data-ajaxurl="<?= $escaper->escapeHtmlAttr($block->getAjaxUrl($alias)) ?>"<?php endif; ?>
     >
         <?= /* @escapeNotVerified */ $_tab['title'] ?>
     </button>
@@ -32,9 +62,10 @@
 </div>
 
 <div class="p-4">
-<?php $index = 1; foreach ($tabs as $_tab) : ?>
+<?php $index = 1; foreach ($tabs as $_tab) :?>
+    <?php $alias = $block->escapeHtmlAttr($_tab['alias']); ?>
     <div id="<?= $alias ?>" data-role="content" x-show="activeTab === <?= $index ?>">
-        <?= /* @escapeNotVerified */ $_tab['is_ajax'] ? '' : $_tab['child_html'] ?>
+        <?= /* @escapeNotVerified */ $_tab['is_ajax'] ? str_replace('x-show="isLoading"', 'x-show="activeTab === ' . $index . '"', $loadingHtml) : $_tab['child_html'] ?>
     </div>
 <?php $index++; endforeach; ?>
 </div>
