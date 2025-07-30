@@ -3,28 +3,16 @@
 
     use Magento\Framework\Escaper;
     use Magento\Framework\View\Element\Template;
+    use Hyva\SwissupEasytabs\ViewModel\Loader;
+    use Hyva\Theme\Model\ViewModelRegistry;
 
     /** @var Template $block */
     /** @var Escaper $escaper */
+    /** @var ViewModelRegistry $viewModels */
     /** @var array $tabs */
     /** @var bool $hasAjaxTabs */
 
-    $loadingHtml = '';
-    if ($hasAjaxTabs) {
-        $loadingHtml = str_replace(
-            [
-                ' fixed ',
-                ' style="left'
-            ],
-            [
-                ' ',
-                ' style-off="left'
-            ],
-            $block->getLayout()->createBlock(Template::class)
-                ->setTemplate('Hyva_Theme::ui/loading.phtml')
-                ->toHtml()
-        );
-    }
+    $loader = $viewModels->require(Loader::class);
 ?>
 
 <div class="tab-select sm:hidden">
@@ -65,7 +53,7 @@
 <?php $index = 1; foreach ($tabs as $_tab) :?>
     <?php $alias = $block->escapeHtmlAttr($_tab['alias']); ?>
     <div id="<?= $alias ?>" data-role="content" x-show="activeTab === <?= $index ?>">
-        <?= /* @escapeNotVerified */ $_tab['is_ajax'] ? str_replace('x-show="isLoading"', 'x-show="activeTab === ' . $index . '"', $loadingHtml) : $_tab['child_html'] ?>
+        <?= /* @escapeNotVerified */ $_tab['is_ajax'] ? $loader->getHtml() : $_tab['child_html'] ?>
     </div>
 <?php $index++; endforeach; ?>
 </div>

@@ -50,6 +50,7 @@
     <div id="<?= $htmlId ?>"
         class="product data items <?= $tabsLayoutType ?> w-full mt-8"
         x-data="swissupEasytabs<?= $uniqueId ?>"
+        x-defer="intersect"
     >
         <?php if ($isCollapsed): ?>
             <?= $block->assign('tabs', $tabs)->fetchView($block->getTemplateFile('layout/collapsed.phtml')); ?>
@@ -67,6 +68,7 @@
     document.addEventListener('alpine:init', () => {
         Alpine.data('swissupEasytabs<?= $uniqueId ?>', () => ({
             activeTab: 1<?php if ($hasAjaxTabs) :?>,
+            isLoading: false,
             fetchTabContent(url) {
                 return fetch(url, {
                     method: 'GET',
@@ -91,11 +93,13 @@
                 return tempDiv.innerHTML;
             },
             async updateTabContent(tab) {
+                this.isLoading = true;
                 const tabContentElement = document.getElementById(tab.getAttribute('aria-controls'));
                 const content = await this.fetchTabContent(tab.dataset.ajaxurl);
                 const processedContent = this.processScripts(content);
                 tabContentElement.innerHTML = processedContent;
                 delete tab.dataset.ajaxurl;
+                this.isLoading = false;
             }<?php endif; ?>
         }));
     });
