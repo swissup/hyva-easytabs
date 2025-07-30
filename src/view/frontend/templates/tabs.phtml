@@ -67,7 +67,10 @@
 <script>
     document.addEventListener('alpine:init', () => {
         Alpine.data('swissupEasytabs<?= $uniqueId ?>', () => ({
-            activeTab: 1<?php if ($hasAjaxTabs) :?>,
+            activeTab: 1,
+            getActivePanel() {
+                return this.$root.querySelectorAll('[role=tabpanel]')[this.activeTab-1];
+            }<?php if ($hasAjaxTabs) :?>,
             isLoading: false,
             fetchTabContent(url) {
                 return fetch(url, {
@@ -93,11 +96,13 @@
                 return tempDiv.innerHTML;
             },
             async updateTabContent(tab) {
+                const { ajaxurl } = tab.dataset;
+                if (!ajaxurl || this.isLoading) return;
                 this.isLoading = true;
-                const tabContentElement = document.getElementById(tab.getAttribute('aria-controls'));
-                const content = await this.fetchTabContent(tab.dataset.ajaxurl);
+                const panel = this.getActivePanel();
+                const content = await this.fetchTabContent(ajaxurl);
                 const processedContent = this.processScripts(content);
-                tabContentElement.innerHTML = processedContent;
+                panel.innerHTML = processedContent;
                 delete tab.dataset.ajaxurl;
                 this.isLoading = false;
             }<?php endif; ?>

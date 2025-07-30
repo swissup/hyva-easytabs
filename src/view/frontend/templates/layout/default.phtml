@@ -16,14 +16,22 @@
 ?>
 
 <div class="tab-select sm:hidden">
+    <label for="tab-select" class="sr-only">Select Tab</label>
     <select 
+        id="tab-select"
         class="border rounded px-4 py-2 w-full"
-        @change="activeTab = parseInt($event.target.value)<?php if ($hasAjaxTabs): ?>; const [tab] = $event.target.selectedOptions; if (tab.dataset.ajaxurl) { updateTabContent(tab); }<?php endif; ?>"
+        @change="activeTab = parseInt($event.target.value)<?php if ($hasAjaxTabs): ?>; const [tab] = $event.target.selectedOptions; updateTabContent(tab);<?php endif; ?>"
+        role="tablist"
+        :aria-activedescendant="'tab-label-' + (getActivePanel()?.id || '')"
+        aria-label="Tabs"
     >
     <?php $index = 1; foreach ($tabs as $_tab) : ?>
         <?php $alias = $block->escapeHtmlAttr($_tab['alias']); ?>
         <option value="<?= $index ?>" 
+            id="tab-label-<?= $alias ?>"
             aria-controls="<?= $alias; ?>"
+            role="tab"
+            aria-selected="<?= ($index === 1) ? 'true' : 'false' ?>"
             <?php if ($_tab['is_ajax']): ?>data-ajaxurl="<?= $escaper->escapeHtmlAttr($block->getAjaxUrl($alias)) ?>"<?php endif; ?>
             :selected="activeTab === <?= $index ?>">
             <?= $block->stripTags($_tab['title']) ?>
@@ -32,15 +40,18 @@
     </select>
 </div>
 
-<div class="hidden sm:flex border-b-2 border-gray-200">
+<div class="hidden sm:flex border-b-2 border-gray-200" role="tablist" aria-label="Tabs">
 <?php $index = 1; foreach ($tabs as $_tab) : ?>
-    <?php $alias = $block->escapeHtmlAttr($_tab['alias']); ?>
+    <?php $alias = $escaper->escapeHtmlAttr($_tab['alias']); ?>
     <button id="tab-label-<?= $alias ?>"
         class="tab-label py-2 px-4 font-semibold border-b-2 focus:outline-none -mb-2px"
         :class="activeTab === <?= $index ?> ? 'border-primary text-primary' : 'text-gray-400 border-transparent hover:border-gray-300'"
-        @click="activeTab = <?= $index ?><?php if ($_tab['is_ajax']): ?>; if ($event.target.dataset.ajaxurl) { updateTabContent($event.target); }<?php endif; ?>"
+        @click="activeTab = <?= $index ?><?php if ($_tab['is_ajax']): ?>; updateTabContent($event.target);<?php endif; ?>"
         type="button"
+        role="tab"
+        :aria-selected="activeTab === <?= $index ?> ? 'true' : 'false'"
         aria-controls="<?= $alias; ?>"
+        :tabindex="activeTab === <?= $index ?> ? '0' : '-1'"
         data-role="collapsible"
         <?php if ($_tab['is_ajax']): ?>data-ajaxurl="<?= $escaper->escapeHtmlAttr($block->getAjaxUrl($alias)) ?>"<?php endif; ?>
     >
@@ -51,8 +62,8 @@
 
 <div class="p-4">
 <?php $index = 1; foreach ($tabs as $_tab) :?>
-    <?php $alias = $block->escapeHtmlAttr($_tab['alias']); ?>
-    <div id="<?= $alias ?>" data-role="content" x-show="activeTab === <?= $index ?>">
+    <?php $alias = $escaper->escapeHtmlAttr($_tab['alias']); ?>
+    <div id="<?= $alias ?>" data-role="content" x-show="activeTab === <?= $index ?>" role="tabpanel" aria-labelledby="tab-label-<?= $alias ?>" tabindex="0">
         <?= /* @escapeNotVerified */ $_tab['is_ajax'] ? $loader->getHtml() : $_tab['child_html'] ?>
     </div>
 <?php $index++; endforeach; ?>
