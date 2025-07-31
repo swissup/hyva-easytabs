@@ -1,0 +1,44 @@
+<?php
+    declare(strict_types=1);
+
+    use Magento\Framework\Escaper;
+    use Magento\Framework\View\Element\Template;
+    use Hyva\SwissupEasytabs\ViewModel\Loader;
+    use Hyva\Theme\Model\ViewModelRegistry;
+
+    /** @var Template $block */
+    /** @var Escaper $escaper */
+    /** @var ViewModelRegistry $viewModels */
+    /** @var array $tabs */
+
+    $loader = $viewModels->require(Loader::class);
+?>
+
+<div class="flex border-b-2 border-gray-200" role="tablist" aria-label="Tabs">
+<?php $index = 1; foreach ($tabs as $_tab) : ?>
+    <?php $alias = $escaper->escapeHtmlAttr($_tab['alias']); ?>
+    <button id="tab-label-<?= $alias ?>"
+        class="tab-label py-2 px-4 font-semibold border-b-2 focus:outline-none -mb-2px"
+        :class="activeTab === <?= $index ?> ? 'border-primary text-primary' : 'text-gray-400 border-transparent hover:border-gray-300'"
+        @click="activeTab = <?= $index ?><?php if ($_tab['is_ajax']): ?>; updateTabContent($event.target);<?php endif; ?>"
+        type="button"
+        role="tab"
+        :aria-selected="activeTab === <?= $index ?> ? 'true' : 'false'"
+        aria-controls="<?= $alias; ?>"
+        :tabindex="activeTab === <?= $index ?> ? '0' : '-1'"
+        data-role="collapsible"
+        <?php if ($_tab['is_ajax']): ?>data-ajaxurl="<?= $escaper->escapeHtmlAttr($block->getAjaxUrl($alias)) ?>"<?php endif; ?>
+    >
+        <?= /* @escapeNotVerified */ $_tab['title'] ?>
+    </button>
+<?php $index++; endforeach; ?>
+</div>
+
+<div class="p-4">
+<?php $index = 1; foreach ($tabs as $_tab) :?>
+    <?php $alias = $escaper->escapeHtmlAttr($_tab['alias']); ?>
+    <div id="<?= $alias ?>" data-role="content" x-show="activeTab === <?= $index ?>" role="tabpanel" aria-labelledby="tab-label-<?= $alias ?>" tabindex="0">
+        <?= /* @escapeNotVerified */ $_tab['is_ajax'] ? $loader->getHtml() : $_tab['child_html'] ?>
+    </div>
+<?php $index++; endforeach; ?>
+</div>
