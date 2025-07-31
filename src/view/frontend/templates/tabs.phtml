@@ -37,6 +37,7 @@
 
 <div class="product info detailed">
     <style>
+        #<?= $htmlId ?> #customer-review-list { padding-top: 0; }
         #<?= $htmlId ?> #customer-review-list > :first-child { display: none; }
         #<?= $htmlId ?> .tab-label .counter::before { content: '('; }
         #<?= $htmlId ?> .tab-label .counter::after { content: ')'; }
@@ -55,7 +56,7 @@
         <?php endif; ?>
     </style>
     <div id="<?= $htmlId ?>"
-        class="product data items <?= $tabsLayoutType ?> w-full mt-8"
+        class="product data items <?= $tabsLayoutType ?><?php if ($isExpanded): ?> md:flex md:flex-wrap<?php endif; ?> w-full mt-8"
         x-data="swissupEasytabs<?= $uniqueId ?>"
         x-defer="intersect"
     >
@@ -76,7 +77,7 @@
         Alpine.data('swissupEasytabs<?= $uniqueId ?>', () => ({
             activeTab: 1,
             getActivePanel() {
-                return this.$root.querySelectorAll('[role=tabpanel]')[this.activeTab-1];
+                return this.$root.querySelectorAll("<?= $isExpanded ? '.tab-content' : '[role=tabpanel]' ?>")[this.activeTab-1];
             }<?php if ($hasAjaxTabs) :?>,
             isLoading: false,
             fetchTabContent(url) {
@@ -112,7 +113,17 @@
                 panel.innerHTML = processedContent;
                 delete tab.dataset.ajaxurl;
                 this.isLoading = false;
-            }<?php endif; ?>
+            }<?php if ($isExpanded): ?>,
+            init() {
+                const tabs = this.$root.querySelectorAll('.tab-label');
+                (async () => {
+                    for (let index = 0; index < tabs.length; index++) {
+                        this.activeTab = index + 1;
+                        await this.updateTabContent(tabs[index]);
+                    }
+                })();
+            }
+            <?php endif; endif; ?>
         }));
     });
 </script>
