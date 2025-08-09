@@ -12,25 +12,24 @@
     /** @var bool $hasAjaxTabs */
 ?>
 
-<div class="tab-select sm:hidden">
+<div class="tab-select-wrapper sm:hidden">
     <label for="tab-select" class="sr-only">Select Tab</label>
     <select 
-        id="tab-select"
-        class="border rounded px-4 py-2 w-full"
-        @change="activeTab = parseInt($event.target.value)<?php if ($hasAjaxTabs): ?>; const [tab] = $event.target.selectedOptions; updateTabContent(tab);<?php endif; ?>"
+        class="tab-select border rounded px-4 py-2 w-full"
+        @change="activeTab = [parseInt($event.target.value)]<?php if ($hasAjaxTabs): ?>; const [tab] = $event.target.selectedOptions; updateTabContent(tab);<?php endif; ?>"
         role="tablist"
-        :aria-activedescendant="'tab-label-' + (getActivePanel()?.id || '')"
+        :aria-activedescendant="activeTab[0] !== undefined ? $root.querySelector('.tab-select').options[activeTab[0]].id : ''"
         aria-label="Tabs"
     >
-    <?php $index = 1; foreach ($tabs as $_tab) : ?>
+    <?php $index = 0; foreach ($tabs as $_tab) : ?>
         <?php $alias = $block->escapeHtmlAttr($_tab['alias']); ?>
         <option value="<?= $index ?>" 
             id="tab-label-<?= $alias ?>"
             aria-controls="<?= $alias; ?>"
             role="tab"
-            aria-selected="<?= ($index === 1) ? 'true' : 'false' ?>"
+            aria-selected="<?= ($index === 0) ? 'true' : 'false' ?>"
             <?php if ($_tab['is_ajax']): ?>data-ajaxurl="<?= $escaper->escapeHtmlAttr($block->getAjaxUrl($alias)) ?>"<?php endif; ?>
-            :selected="activeTab === <?= $index ?>">
+            :selected="activeTab.includes(<?= $index ?>)">
             <?= $block->stripTags($_tab['title']) ?>
         </option>
     <?php $index++; endforeach; ?>

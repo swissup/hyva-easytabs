@@ -33,6 +33,9 @@
             break;
         }
     }
+
+    $initOptions = json_decode($block->getInitOptions(), true);
+    $activeTabs = $initOptions['active'] ?? [0];
 ?>
 
 <div class="product info detailed">
@@ -65,7 +68,7 @@
         <?php elseif ($isExpanded) : ?>
             <?= $block->assign('tabs', $tabs)->fetchView($block->getTemplateFile('layout/expanded.phtml')); ?>
         <?php elseif ($isAccordion) : ?>
-            <?= $block->assign('tabs', $tabs)->fetchView($block->getTemplateFile('layout/accordion.phtml')); ?>
+            <?= $block->assign('tabs', $tabs)->assign('initOptions', $initOptions)->fetchView($block->getTemplateFile('layout/accordion.phtml')); ?>
         <?php else : ?>
             <?= $block->assign('tabs', $tabs)->assign('hasAjaxTabs', $hasAjaxTabs)->fetchView($block->getTemplateFile('layout/default.phtml')); ?>
         <?php endif ?>
@@ -75,10 +78,7 @@
 <script>
     document.addEventListener('alpine:init', () => {
         Alpine.data('swissupEasytabs<?= $uniqueId ?>', () => ({
-            activeTab: 1,
-            getActivePanel() {
-                return this.$root.querySelectorAll("<?= $isExpanded ? '.tab-content' : '[role=tabpanel]' ?>")[this.activeTab-1];
-            }<?php if ($hasAjaxTabs) :?>,
+            activeTab: [<?= implode(',', $activeTabs) ?>]<?php if ($hasAjaxTabs) :?>,
             isLoading: false,
             fetchTabContent(url) {
                 return fetch(url, {
@@ -107,23 +107,23 @@
                 const { ajaxurl } = tab.dataset;
                 if (!ajaxurl || this.isLoading) return;
                 this.isLoading = true;
-                const panel = this.getActivePanel();
+                const panel = tab.ariaControlsElements?.[0] || document.getElementById(tab.id.replace('tab-label-', ''));
                 const content = await this.fetchTabContent(ajaxurl);
                 const processedContent = this.processScripts(content);
                 panel.innerHTML = processedContent;
                 delete tab.dataset.ajaxurl;
                 this.isLoading = false;
-            }<?php if ($isExpanded): ?>,
+            },
             init() {
                 const tabs = this.$root.querySelectorAll('.tab-label');
+                const activeTab = this.activeTab.map(index => tabs[index]).filter(Boolean);
                 (async () => {
-                    for (let index = 0; index < tabs.length; index++) {
-                        this.activeTab = index + 1;
-                        await this.updateTabContent(tabs[index]);
+                    for (const tab of activeTab) {
+                        await this.updateTabContent(tab);
                     }
                 })();
             }
-            <?php endif; endif; ?>
+            <?php endif; ?>
         }));
     });
 </script>

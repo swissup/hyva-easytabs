@@ -1,0 +1,57 @@
+<?php
+    declare(strict_types=1);
+
+    use Magento\Framework\Escaper;
+    use Magento\Framework\View\Element\Template;
+    use Hyva\SwissupEasytabs\ViewModel\Loader;
+    use Hyva\Theme\Model\ViewModelRegistry;
+
+    /** @var Template $block */
+    /** @var Escaper $escaper */
+    /** @var ViewModelRegistry $viewModels */
+    /** @var array $tabs */
+    /** @var array $initOptions */
+
+    $loader = $viewModels->require(Loader::class);
+    $activeTabs = $initOptions['active'] ?? [];
+    $isMultipleCollapsible = $initOptions['multipleCollapsible'] ?? false;
+?>
+
+<div class="accordion" role="tablist" aria-label="Accordion Tabs">
+    <?php $index = 0; foreach ($tabs as $_tab) : ?>
+        <?php $alias = $escaper->escapeHtmlAttr($_tab['alias']); ?>
+        <div class="border-b border-gray-200">
+            <button
+                type="button"
+                class="tab-label w-full text-left py-4 px-4 font-semibold focus:outline-none flex justify-between items-center"
+                :class="activeTab.includes(<?= $index ?>) ? 'text-primary' : 'text-gray-700'"
+                @click="activeTab.includes(<?= $index ?>) ? activeTab = activeTab.filter(i => i !== <?= $index ?>) : <?php if ($isMultipleCollapsible): ?>activeTab.push(<?= $index ?>)<?php else: ?>activeTab = [<?= $index ?>]<?php endif; ?>;<?php if ($_tab['is_ajax']): ?> updateTabContent($event.target);<?php endif; ?> setTimeout(() => { document.getElementById('<?= $alias ?>').scrollIntoView({behavior: 'smooth', block: 'nearest'}); }, 200);"
+                id="tab-label-<?= $alias ?>"
+                aria-controls="<?= $alias ?>"
+                :aria-expanded="activeTab.includes(<?= $index ?>) ? 'true' : 'false'"
+                data-role="collapsible"
+                <?php if ($_tab['is_ajax']): ?>data-ajaxurl="<?= $escaper->escapeHtmlAttr($block->getAjaxUrl($alias)) ?>"<?php endif; ?>
+            >
+                <span>
+                    <?= /* @escapeNotVerified */ $_tab['title'] ?>
+                </span>
+                <span class="ml-2">
+                    <svg :class="activeTab.includes(<?= $index ?>) ? 'transform rotate-180' : ''" class="h-5 w-5 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+                </span>
+            </button>
+            <div
+                id="<?= $alias ?>"
+                x-show="activeTab.includes(<?= $index ?>)"
+                x-transition
+                class="p-4 bg-gray-50"
+                role="tabpanel"
+                aria-labelledby="tab-label-<?= $alias ?>"
+                tabindex="0"
+                data-role="content"<?php if (!in_array($index, $activeTabs)) : ?>
+                style="display: none;"<?php endif; ?>
+            >
+                <?= /* @escapeNotVerified */ $_tab['is_ajax'] ? $loader->getHtml() : $_tab['child_html'] ?>
+            </div>
+        </div>
+    <?php $index++; endforeach; ?>
+</div>
