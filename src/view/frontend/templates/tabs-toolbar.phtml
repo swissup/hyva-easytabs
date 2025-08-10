@@ -1,0 +1,30 @@
+<?php
+    declare(strict_types=1);
+
+    use Magento\Framework\Escaper;
+    use Magento\Framework\View\Element\Template;
+
+    /** @var Template $block */
+    /** @var Escaper $escaper */
+    /** @var array $tabs */
+
+    $firstAlias = $escaper->escapeHtmlAttr($tabs[0]['alias']);
+    $collideObject = implode(', ', array_map(
+        fn($tab) => "'" . $escaper->escapeHtmlAttr($tab['alias']) . "': false",
+        $tabs
+    ));
+?>
+
+<div class="tabs-toolbar sticky top-0 z-10 flex bg-container"
+    x-data="{ collide: { <?= $collideObject ?> } }"
+>
+<?php $index = 0; foreach ($tabs as $tab): $alias = $escaper->escapeHtmlAttr($tab['alias']); ?>
+    <a class="tabs-toolbar-item flex-1 text-center py-2 px-4 font-semibold border-b-2 truncate focus:outline-none"
+        :class="(Object.keys(collide).filter(v => collide[v]).pop() ?? '<?= $firstAlias?>') === '<?= $alias ?>' ? 'border-primary text-primary' : 'text-gray-400 border-transparent hover:border-gray-300'"
+        @click.prevent="const panel = document.getElementById('<?= $alias ?>'); panel.style.scrollMarginTop = event.target.clientHeight + 'px'; panel.scrollIntoView({behavior: 'smooth', block: 'nearest'});"
+        @scroll.window="const panelRect = document.getElementById('<?= $alias ?>').getBoundingClientRect(); const toolbarItemRect = $root.querySelectorAll('.tabs-toolbar-item')[<?= $index ?>].getBoundingClientRect(); collide['<?= $alias ?>'] = panelRect.top <= toolbarItemRect.bottom && panelRect.bottom >= toolbarItemRect.top;"
+        href="#<?= $alias ?>">
+        <?= /* @escapeNotVerified */ $tab['title'] ?>
+    </a>
+<?php $index++; endforeach; ?>
+</div>

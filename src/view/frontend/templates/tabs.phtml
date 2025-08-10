@@ -38,14 +38,14 @@
     $activeTabs = $initOptions['active'] ?? [0];
 ?>
 
-<div class="product info detailed">
+<div id="<?= $htmlId ?>" class="product info detailed relative">
     <style>
         #<?= $htmlId ?> #customer-review-list { padding-top: 0; }
         #<?= $htmlId ?> #customer-review-list > :first-child { display: none; }
-        #<?= $htmlId ?> .tab-label .counter::before { content: '('; }
-        #<?= $htmlId ?> .tab-label .counter::after { content: ')'; }
+        #<?= $htmlId ?> :is(.tab-label, .tabs-toolbar-item) .counter::before { content: '('; }
+        #<?= $htmlId ?> :is(.tab-label, .tabs-toolbar-item) .counter::after { content: ')'; }
         #<?= $htmlId ?> section.my-12 { margin-top: 0; margin-bottom: 0; }
-        <?php if ($isDefault || $isCollapsed): ?>
+        <?php if ($isDefault || $isCollapsed || $block->hasToolbar()): ?>
         #<?= $htmlId ?> .-mb-2px { margin-bottom: -2px; }
         #<?= $htmlId ?> .hover\:border-gray-300:hover { border-color: #D1D5DB; /* Tailwind's gray-300 */ }
         <?php endif; if ($isDefault): ?>
@@ -58,8 +58,12 @@
         <?= '}' ?>
         <?php endif; ?>
     </style>
-    <div id="<?= $htmlId ?>"
-        class="product data items <?= $tabsLayoutType ?><?php if ($isExpanded): ?> md:flex md:flex-wrap<?php endif; ?> w-full mt-8"
+
+<?php if ($block->hasToolbar()): ?>
+    <?= $block->assign('tabs', $tabs)->fetchView($block->getTemplateFile('tabs-toolbar.phtml')); ?>
+<?php endif; ?>
+
+    <div class="product data items <?= $tabsLayoutType ?><?php if ($isExpanded): ?> md:flex md:flex-wrap<?php endif; ?> w-full mt-8"
         x-data="swissupEasytabs<?= $uniqueId ?>"
         x-defer="intersect"
     >

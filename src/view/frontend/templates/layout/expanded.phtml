@@ -14,13 +14,13 @@
     $loader = $viewModels->require(Loader::class);
 ?>
 
-<?php foreach ($tabs as $_index => $_tab) : ?>
+<?php $index = 0; foreach ($tabs as $_tab) : ?>
     <?php
         $alias = $block->escapeHtmlAttr($_tab['alias']);
         $isAjax = $_tab['is_ajax'] ?? false;
     ?>
     <div id="tab-label-<?= $alias ?>"
-        class="tab-label flex flex-col items-center pt-6 pb-3 mx-auto mb-4 border-b-2 border-gray-300 md:pt-0 md:block  md:border-0 md:w-1/3 lg:w-1/4"
+        class="tab-label flex flex-col items-center pt-6 pb-3 mx-auto mb-4 border-b-2 border-gray-300 md:pt-0 md:block  md:border-0 md:w-1/3 lg:w-1/4<?php if ($block->hasToolbar() && $index === 0) : ?> hidden<?php endif; ?>"
         <?php if ($_tab['is_ajax']): ?>data-ajaxurl="<?= $escaper->escapeHtmlAttr($block->getAjaxUrl($alias)) ?>"<?php endif; ?>
     >
         <h2 id="tab-label-<?= $alias ?>-title"
@@ -32,4 +32,4 @@
     <div id="<?= $alias; ?>" class="tab-content mb-8 md:w-2/3 lg:w-3/4">
         <?= /* @escapeNotVerified */ $isAjax ? $loader->getHtml() : $_tab['child_html'] ?>
     </div>
-<?php endforeach; ?>
+<?php $index++; endforeach; ?>
