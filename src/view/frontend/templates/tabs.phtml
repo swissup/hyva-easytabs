@@ -26,14 +26,7 @@
             break;
     }
 
-    $hasAjaxTabs = false;
-    foreach ($tabs as $_tab) {
-        if (!empty($_tab['is_ajax'])) {
-            $hasAjaxTabs = true;
-            break;
-        }
-    }
-
+    $hasAjaxTabs = in_array(true, array_column($tabs, 'is_ajax'));
     $initOptions = json_decode($block->getInitOptions(), true);
     $activeTabs = $initOptions['active'] ?? [0];
 ?>
@@ -81,8 +74,27 @@
 
 <script>
     document.addEventListener('alpine:init', () => {
+        <?php if ($listenProductTabs = $block->getListenProductTabs()): ?>
+        window.addEventListener('configurable-selection-changed', (event) => {
+            const productId = event.detail.productIndex;
+            const aliases = <?= json_encode($listenProductTabs) ?>;
+            const url = <?= json_encode($block->getAjaxUrl('tab_alias')) ?>;
+            const easytabsComponent = Alpine.evaluate(document.querySelector('#<?= $htmlId ?> .product.data.items'), '$data');
+            const tabs = document.querySelectorAll('.product.data.items .tab-label');
+
+            tabs && (async () => {
+                for (const tab of tabs) {
+                    const alias = tab.id.replace('tab-label-', '');
+                    if (!aliases.includes(alias)) continue;
+                    tab.dataset.ajaxurl = url.replace('/tab_alias/', `/${alias}/`).replace('/id/', '/parent_id/') + `id/${productId}/`;
+                    await easytabsComponent.updateTabContent?.(tab);
+                }
+            })();
+
+        });
+        <?php endif; ?>
         Alpine.data('swissupEasytabs<?= $uniqueId ?>', () => ({
-            activeTab: [<?= implode(',', $activeTabs) ?>]<?php if ($hasAjaxTabs) :?>,
+            activeTab: [<?= implode(',', $activeTabs) ?>]<?php if ($hasAjaxTabs || $listenProductTabs) :?>,
             isLoading: false,
             fetchTabContent(url) {
                 return fetch(url, {
