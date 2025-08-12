@@ -16,20 +16,20 @@
 
 <?php $index = 0; foreach ($tabs as $_tab) : ?>
     <?php
-        $alias = $block->escapeHtmlAttr($_tab['alias']);
+        $alias = $escaper->escapeHtmlAttr($_tab['alias']);
         $isAjax = $_tab['is_ajax'] ?? false;
     ?>
-    <div id="tab-label-<?= $alias ?>"
-        class="tab-label flex flex-col items-center pt-6 pb-3 mx-auto mb-4 border-b-2 border-gray-300 md:pt-0 md:block  md:border-0 md:w-1/3 lg:w-1/4<?php if ($block->hasToolbar() && $index === 0) : ?> hidden<?php endif; ?>"
+    <div id="tab-label-<?= /* @noEscape */ $alias ?>"
+        class="tab-label flex flex-col items-center pt-6 pb-3 mx-auto mb-4 md:pt-0<?php if ($block->hasToolbar()) : ?> hidden<? else: ?> border-b-2 border-gray-300 md:block md:border-0 md:w-1/3 lg:w-1/4<?php endif; ?>"
         <?php if ($_tab['is_ajax']): ?>data-ajaxurl="<?= $escaper->escapeHtmlAttr($block->getAjaxUrl($alias)) ?>"<?php endif; ?>
     >
-        <h2 id="tab-label-<?= $alias ?>-title"
+        <h2 id="tab-label-<?= /* @noEscape */ $alias ?>-title"
             class="text-2xl font-medium text-gray-900 title-font"
         >
-            <?= /* @escapeNotVerified */ $_tab['title'] ?>
+            <?= $escaper->escapeHtml($_tab['title'], ['span']) ?>
         </h2>
     </div>
-    <div id="<?= $alias; ?>" class="tab-content mb-8 md:w-2/3 lg:w-3/4">
-        <?= /* @escapeNotVerified */ $isAjax ? $loader->getHtml() : $_tab['child_html'] ?>
+    <div id="<?= $alias; ?>" class="tab-content mb-8<? if ($block->hasToolbar()) : ?> w-full<? else: ?> md:w-2/3 lg:w-3/4<? endif; ?>">
+        <?= /*noEscape */ $isAjax ? $loader->getHtml() : $_tab['child_html'] ?>
     </div>
 <?php $index++; endforeach; ?>
