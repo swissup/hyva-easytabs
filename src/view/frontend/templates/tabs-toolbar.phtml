@@ -2,9 +2,9 @@
     declare(strict_types=1);
 
     use Magento\Framework\Escaper;
-    use Magento\Framework\View\Element\Template;
+    use Swissup\Easytabs\Block\Tabs;
 
-    /** @var Template $block */
+    /** @var Tabs $block */
     /** @var Escaper $escaper */
     /** @var array $tabs */
 
@@ -24,7 +24,7 @@
         @click.prevent="const panel = document.getElementById('<?= /* @noEscape */ $alias ?>'); panel.style.scrollMarginTop = event.target.clientHeight + 'px'; panel.scrollIntoView({behavior: 'smooth', block: 'nearest'});"
         @scroll.window="const panelRect = document.getElementById('<?= /* @noEscape */ $alias ?>').getBoundingClientRect(); const toolbarItemRect = $root.querySelectorAll('.tabs-toolbar-item')[<?= /* @noEscape */ $index ?>].getBoundingClientRect(); collide['<?= /* @noEscape */ $alias ?>'] = panelRect.top <= toolbarItemRect.bottom && panelRect.bottom >= toolbarItemRect.top;"
         href="#<?= /* @noEscape */ $alias ?>">
-        <?= /* @escapeNotVerified */ $tab['title'] ?>
+        <?= $escaper->escapeHtml($tab['title'], ['span']) ?>
     </a>
 <?php $index++; endforeach; ?>
 </div>

@@ -2,11 +2,11 @@
     declare(strict_types=1);
 
     use Magento\Framework\Escaper;
-    use Magento\Framework\View\Element\Template;
     use Hyva\SwissupEasytabs\ViewModel\Loader;
     use Hyva\Theme\Model\ViewModelRegistry;
+    use Swissup\Easytabs\Block\Tabs;
 
-    /** @var Template $block */
+    /** @var Tabs $block */
     /** @var Escaper $escaper */
     /** @var array $tabs */
     /** @var bool $hasAjaxTabs */
@@ -23,11 +23,11 @@
     >
     <?php $index = 0; foreach ($tabs as $_tab) : ?>
         <?php $alias = $block->escapeHtmlAttr($_tab['alias']); ?>
-        <option value="<?= $index ?>" 
-            id="tab-label-<?= $alias ?>"
-            aria-controls="<?= $alias; ?>"
+        <option value="<?= /* @noEscape */$index ?>" 
+            id="tab-label-<?= /* @noEscape */ $alias ?>"
+            aria-controls="<?= /* @noEscape */ $alias; ?>"
             role="tab"
-            aria-selected="<?= ($index === 0) ? 'true' : 'false' ?>"
+            aria-selected="<?= /* @noEscape */ ($index === 0) ? 'true' : 'false' ?>"
             <?php if ($_tab['is_ajax']): ?>data-ajaxurl="<?= $escaper->escapeHtmlAttr($block->getAjaxUrl($alias)) ?>"<?php endif; ?>
             :selected="activeTab.includes(<?= $index ?>)">
             <?= $block->stripTags($_tab['title']) ?>
@@ -36,4 +36,4 @@
     </select>
 </div>
 
-<?= $block->fetchView($block->getTemplateFile('layout/collapsed.phtml')); ?>
+<?= /* @noEscape */ $block->fetchView($block->getTemplateFile('layout/collapsed.phtml')); ?>

@@ -2,11 +2,11 @@
     declare(strict_types=1);
 
     use Magento\Framework\Escaper;
-    use Magento\Framework\View\Element\Template;
     use Hyva\SwissupEasytabs\ViewModel\Loader;
     use Hyva\Theme\Model\ViewModelRegistry;
+    use Swissup\Easytabs\Block\Tabs;
 
-    /** @var Template $block */
+    /** @var Tabs $block */
     /** @var Escaper $escaper */
     /** @var ViewModelRegistry $viewModels */
     /** @var array $tabs */
@@ -30,6 +30,6 @@
         </h2>
     </div>
     <div id="<?= $alias; ?>" class="tab-content mb-8<? if ($block->hasToolbar()) : ?> w-full<? else: ?> md:w-2/3 lg:w-3/4<? endif; ?>">
-        <?= /*noEscape */ $isAjax ? $loader->getHtml() : $_tab['child_html'] ?>
+        <?= /* @noEscape */ $isAjax ? $loader->getHtml() : $_tab['child_html'] ?>
     </div>
 <?php $index++; endforeach; ?>

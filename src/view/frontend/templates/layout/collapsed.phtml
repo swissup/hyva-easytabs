@@ -2,11 +2,11 @@
     declare(strict_types=1);
 
     use Magento\Framework\Escaper;
-    use Magento\Framework\View\Element\Template;
     use Hyva\SwissupEasytabs\ViewModel\Loader;
     use Hyva\Theme\Model\ViewModelRegistry;
+    use Swissup\Easytabs\Block\Tabs;
 
-    /** @var Template $block */
+    /** @var Tabs $block */
     /** @var Escaper $escaper */
     /** @var ViewModelRegistry $viewModels */
     /** @var array $tabs */
@@ -17,19 +17,19 @@
 <div class="flex border-b-2 border-gray-200" role="tablist" aria-label="Tabs">
 <?php $index = 0; foreach ($tabs as $_tab) : ?>
     <?php $alias = $escaper->escapeHtmlAttr($_tab['alias']); ?>
-    <button id="tab-label-<?= $alias ?>"
+    <button id="tab-label-<?= /* @noEscape */ $alias ?>"
         class="tab-label py-2 px-4 font-semibold border-b-2 focus:outline-none -mb-2px"
-        :class="activeTab.includes(<?= $index ?>) ? 'border-primary text-primary' : 'text-gray-400 border-transparent hover:border-gray-300'"
-        @click="activeTab = [<?= $index ?>]<?php if ($_tab['is_ajax']): ?>; updateTabContent($event.target);<?php endif; ?>"
+        :class="activeTab.includes(<?= /* @noEscape */ $index ?>) ? 'border-primary text-primary' : 'text-gray-400 border-transparent hover:border-gray-300'"
+        @click="activeTab = [<?= /* @noEscape */ $index ?>]<?php if ($_tab['is_ajax']): ?>; updateTabContent($event.target);<?php endif; ?>"
         type="button"
         role="tab"
-        :aria-selected="activeTab.includes(<?= $index ?>) ? 'true' : 'false'"
-        aria-controls="<?= $alias; ?>"
-        :tabindex="activeTab.includes(<?= $index ?>) ? '0' : '-1'"
+        :aria-selected="activeTab.includes(<?= /* @noEscape */ $index ?>) ? 'true' : 'false'"
+        aria-controls="<?= /* @noEscape */ $alias; ?>"
+        :tabindex="activeTab.includes(<?= /* @noEscape */ $index ?>) ? '0' : '-1'"
         data-role="collapsible"
         <?php if ($_tab['is_ajax']): ?>data-ajaxurl="<?= $escaper->escapeHtmlAttr($block->getAjaxUrl($alias)) ?>"<?php endif; ?>
     >
-        <?= /* @escapeNotVerified */ $_tab['title'] ?>
+        <?= $escaper->escapeHtml($_tab['title'], ['span']) ?>
     </button>
 <?php $index++; endforeach; ?>
 </div>
@@ -37,8 +37,8 @@
 <div class="p-4">
 <?php $index = 0; foreach ($tabs as $_tab) :?>
     <?php $alias = $escaper->escapeHtmlAttr($_tab['alias']); ?>
-    <div id="<?= $alias ?>" data-role="content" x-show="activeTab.includes(<?= $index ?>)" role="tabpanel" aria-labelledby="tab-label-<?= $alias ?>" tabindex="0">
-        <?= /* @escapeNotVerified */ $_tab['is_ajax'] ? $loader->getHtml() : $_tab['child_html'] ?>
+    <div id="<?= /* @noEscape */ $alias ?>" data-role="content" x-show="activeTab.includes(<?= $index ?>)" role="tabpanel" aria-labelledby="tab-label-<?= $alias ?>" tabindex="0">
+        <?= /* @noEscape */ $_tab['is_ajax'] ? $loader->getHtml() : $_tab['child_html'] ?>
     </div>
 <?php $index++; endforeach; ?>
 </div>

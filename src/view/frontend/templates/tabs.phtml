@@ -1,4 +1,7 @@
 <?php
+    /** @var \Magento\Framework\Escaper $escaper */
+    /** @var \Swissup\Easytabs\Block\Tabs $block */
+
     $tabs = $block->prepareTabsData();
     if (!$tabs) {
         return;
@@ -33,41 +36,41 @@
 
 <div id="<?= $htmlId ?>" class="product info detailed relative">
     <style>
-        #<?= $htmlId ?> #customer-review-list { padding-top: 0; }
-        #<?= $htmlId ?> #customer-review-list > :first-child { display: none; }
-        #<?= $htmlId ?> :is(.tab-label, .tabs-toolbar-item) .counter::before { content: '('; }
-        #<?= $htmlId ?> :is(.tab-label, .tabs-toolbar-item) .counter::after { content: ')'; }
-        #<?= $htmlId ?> section.my-12 { margin-top: 0; margin-bottom: 0; }
+        #<?= /* @noEscape */ $htmlId ?> #customer-review-list { padding-top: 0; }
+        #<?= /* @noEscape */ $htmlId ?> #customer-review-list > :first-child { display: none; }
+        #<?= /* @noEscape */ $htmlId ?> :is(.tab-label, .tabs-toolbar-item) .counter::before { content: '('; }
+        #<?= /* @noEscape */ $htmlId ?> :is(.tab-label, .tabs-toolbar-item) .counter::after { content: ')'; }
+        #<?= /* @noEscape */ $htmlId ?> section.my-12 { margin-top: 0; margin-bottom: 0; }
         <?php if ($isDefault || $isCollapsed || $block->hasToolbar()): ?>
-        #<?= $htmlId ?> .-mb-2px { margin-bottom: -2px; }
-        #<?= $htmlId ?> .hover\:border-gray-300:hover { border-color: #D1D5DB; /* Tailwind's gray-300 */ }
+        #<?= /* @noEscape */ $htmlId ?> .-mb-2px { margin-bottom: -2px; }
+        #<?= /* @noEscape */ $htmlId ?> .hover\:border-gray-300:hover { border-color: #D1D5DB; /* Tailwind's gray-300 */ }
         <?php endif; if ($isDefault): ?>
-        #<?= $htmlId ?> div[role="tablist"] { display: none; }
+        #<?= /* @noEscape */ $htmlId ?> div[role="tablist"] { display: none; }
         <?= '@media (min-width: 640px) {' ?>
-            #<?= $htmlId ?> .sm\:hidden { display: none; }
+            #<?= /* @noEscape */ $htmlId ?> .sm\:hidden { display: none; }
             <?php if ($isDefault): ?>
-            #<?= $htmlId ?> div[role="tablist"] { display: flex; }
+            #<?= /* @noEscape */ $htmlId ?> div[role="tablist"] { display: flex; }
             <?php endif; ?>
         <?= '}' ?>
         <?php endif; ?>
     </style>
 
 <?php if ($block->hasToolbar()): ?>
-    <?= $block->assign('tabs', $tabs)->fetchView($block->getTemplateFile('tabs-toolbar.phtml')); ?>
+    <?= /* @noEscape */ $block->assign('tabs', $tabs)->fetchView($block->getTemplateFile('tabs-toolbar.phtml')); ?>
 <?php endif; ?>
 
-    <div class="product data items <?= $tabsLayoutType ?><?php if ($isExpanded): ?> md:flex md:flex-wrap<?php endif; ?> w-full mt-8"
-        x-data="swissupEasytabs<?= $uniqueId ?>"
+    <div class="product data items <?= $escaper->escapeHtmlAttr($tabsLayoutType) ?><?php if ($isExpanded): ?> md:flex md:flex-wrap<?php endif; ?> w-full mt-8"
+        x-data="swissupEasytabs<?= /* @noEscape */ $uniqueId ?>"
         x-defer="intersect"
     >
         <?php if ($isCollapsed): ?>
-            <?= $block->assign('tabs', $tabs)->fetchView($block->getTemplateFile('layout/collapsed.phtml')); ?>
+            <?= /* @noEscape */ $block->assign('tabs', $tabs)->fetchView($block->getTemplateFile('layout/collapsed.phtml')); ?>
         <?php elseif ($isExpanded) : ?>
-            <?= $block->assign('tabs', $tabs)->fetchView($block->getTemplateFile('layout/expanded.phtml')); ?>
+            <?= /* @noEscape */ $block->assign('tabs', $tabs)->fetchView($block->getTemplateFile('layout/expanded.phtml')); ?>
         <?php elseif ($isAccordion) : ?>
-            <?= $block->assign('tabs', $tabs)->assign('initOptions', $initOptions)->fetchView($block->getTemplateFile('layout/accordion.phtml')); ?>
+            <?= /* @noEscape */ $block->assign('tabs', $tabs)->assign('initOptions', $initOptions)->fetchView($block->getTemplateFile('layout/accordion.phtml')); ?>
         <?php else : ?>
-            <?= $block->assign('tabs', $tabs)->assign('hasAjaxTabs', $hasAjaxTabs)->fetchView($block->getTemplateFile('layout/default.phtml')); ?>
+            <?= /* @noEscape */ $block->assign('tabs', $tabs)->assign('hasAjaxTabs', $hasAjaxTabs)->fetchView($block->getTemplateFile('layout/default.phtml')); ?>
         <?php endif ?>
     </div>
 </div>
@@ -79,7 +82,7 @@
             const productId = event.detail.productIndex;
             const aliases = <?= json_encode($listenProductTabs) ?>;
             const url = <?= json_encode($block->getAjaxUrl('tab_alias')) ?>;
-            const easytabsComponent = Alpine.evaluate(document.querySelector('#<?= $htmlId ?> .product.data.items'), '$data');
+            const easytabsComponent = Alpine.evaluate(document.querySelector('#<?= /* @noEscape */ $htmlId ?> .product.data.items'), '$data');
             const tabs = document.querySelectorAll('.product.data.items .tab-label');
 
             tabs && (async () => {
@@ -94,7 +97,7 @@
         });
         <?php endif; ?>
         Alpine.data('swissupEasytabs<?= $uniqueId ?>', () => ({
-            activeTab: [<?= implode(',', $activeTabs) ?>]<?php if ($hasAjaxTabs || $listenProductTabs) :?>,
+            activeTab: [<?= /* @noEscape */ implode(',', $activeTabs) ?>]<?php if ($hasAjaxTabs || $listenProductTabs) :?>,
             isLoading: false,
             fetchTabContent(url) {
                 return fetch(url, {
