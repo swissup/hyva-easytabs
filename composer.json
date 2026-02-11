@@ -1,5 +1,5 @@
 {
-    "name": "hyva-themes/magento2-swissup-easytabs",
+    "name": "swissup/hyva-easytabs",
     "description": "Hyvä Themes Compatibility module for Swissup_Easytabs",
     "type": "magento2-module",
     "version": "1.0.0",
@@ -18,7 +18,7 @@
             "src/registration.php"
         ],
         "psr-4": {
-            "Hyva\\SwissupEasytabs\\": "src/"
+            "Swissup\\HyvaEasytabs\\": "src/"
         }
     }
 }

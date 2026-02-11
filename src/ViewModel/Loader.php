@@ -1,5 +1,5 @@
 <?php
-namespace Hyva\SwissupEasytabs\ViewModel;
+namespace Swissup\HyvaEasytabs\ViewModel;
 
 use Magento\Framework\View\Element\Block\ArgumentInterface;
 use Magento\Framework\View\Element\Template;

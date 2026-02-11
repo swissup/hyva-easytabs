@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
     <event name="swissup_easytabs_product_review_prepare_layout_after">
-        <observer name="hyva_swissup_easytabs_review_layout_after" instance="Hyva\SwissupEasytabs\Observer\ProductReviewPrepareLayoutAfter" />
+        <observer name="hyva_swissup_easytabs_review_layout_after" instance="Swissup\HyvaEasytabs\Observer\ProductReviewPrepareLayoutAfter" />
     </event>
     <event name="catalog_controller_product_init_after">
-        <observer name="hyva_swissup_easytabs_product_init_after" instance="Hyva\SwissupEasytabs\Observer\CatalogControllerProductInitAfter" />
+        <observer name="hyva_swissup_easytabs_product_init_after" instance="Swissup\HyvaEasytabs\Observer\CatalogControllerProductInitAfter" />
     </event>
 </config>

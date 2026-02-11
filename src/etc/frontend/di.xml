@@ -6,7 +6,7 @@
             <argument name="compatModules" xsi:type="array">
                 <item name="hyva-magento2-swissup-easytabs" xsi:type="array">
                     <item name="original_module" xsi:type="string">Swissup_Easytabs</item>
-                    <item name="compat_module" xsi:type="string">Hyva_SwissupEasytabs</item>
+                    <item name="compat_module" xsi:type="string">Swissup_HyvaEasytabs</item>
                 </item>
             </argument>
         </arguments>

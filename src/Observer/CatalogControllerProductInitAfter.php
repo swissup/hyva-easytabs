@@ -1,5 +1,5 @@
 <?php
-namespace Hyva\SwissupEasytabs\Observer;
+namespace Swissup\HyvaEasytabs\Observer;
 
 use Magento\Framework\App\ViewInterface;
 use Magento\Framework\Event\ObserverInterface;
