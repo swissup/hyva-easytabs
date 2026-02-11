@@ -31,6 +31,9 @@
 
     $hasAjaxTabs = in_array(true, array_column($tabs, 'is_ajax'));
     $initOptions = json_decode($block->getInitOptions(), true);
+    if (isset($initOptions['active']) && is_string($initOptions['active'])) {
+        $initOptions['active'] = explode(',', $initOptions['active']);
+    }
     $activeTabs = $initOptions['active'] ?? [0];
 ?>
 
