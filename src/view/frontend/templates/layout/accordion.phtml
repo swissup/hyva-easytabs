@@ -36,7 +36,7 @@
                     <?= $escaper->escapeHtml($_tab['title'], ['span']) ?>
                 </span>
                 <span class="ml-2">
-                    <svg :class="activeTab.includes(<?= /* @noEscape */ $index ?>) ? 'transform rotate-180' : ''" class="h-5 w-5 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+                    <?= /* @noEscape */ $block->assign('index', $index)->fetchView($block->getTemplateFile('layout/accordion/toggler-icon.phtml')) ?>
                 </span>
             </button>
             <div
