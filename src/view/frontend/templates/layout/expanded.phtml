@@ -29,7 +29,7 @@
             <?= $escaper->escapeHtml($_tab['title'], ['span']) ?>
         </h2>
     </div>
-    <div id="<?= $alias; ?>" class="tab-content mb-8<? if ($block->hasToolbar()) : ?> w-full<? else: ?> md:w-2/3 lg:w-3/4<? endif; ?>">
+    <div id="<?= /* @noEscape */ $alias ?>" class="tab-content mb-8<?php if ($block->hasToolbar()) : ?> w-full<?php else: ?> md:w-2/3 lg:w-3/4<?php endif; ?>">
         <?= /* @noEscape */ $isAjax ? $loader->getHtml() : $_tab['child_html'] ?>
     </div>
 <?php $index++; endforeach; ?>

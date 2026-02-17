@@ -19,7 +19,7 @@
     <?php $alias = $escaper->escapeHtmlAttr($_tab['alias']); ?>
     <button id="tab-label-<?= /* @noEscape */ $alias ?>"
         class="tab-label py-2 px-4 font-semibold border-b-2 focus:outline-none -mb-2px"
-        :class="activeTab.includes(<?= /* @noEscape */ $index ?>) ? 'border-primary text-primary' : 'text-gray-400 border-transparent hover:border-gray-300'"
+        :class="activeTab.includes(<?= /* @noEscape */ $index ?>) ? 'active border-primary text-primary' : 'text-gray-400 border-transparent hover:border-gray-300'"
         @click="activeTab = [<?= /* @noEscape */ $index ?>]<?php if ($_tab['is_ajax']): ?>; updateTabContent($event.target);<?php endif; ?>"
         type="button"
         role="tab"
@@ -37,7 +37,7 @@
 <div class="p-4">
 <?php $index = 0; foreach ($tabs as $_tab) :?>
     <?php $alias = $escaper->escapeHtmlAttr($_tab['alias']); ?>
-    <div id="<?= /* @noEscape */ $alias ?>" data-role="content" x-show="activeTab.includes(<?= $index ?>)" role="tabpanel" aria-labelledby="tab-label-<?= $alias ?>" tabindex="0">
+    <div id="<?= /* @noEscape */ $alias ?>" data-role="content" x-show="activeTab.includes(<?= /* @noEscape */ $index ?>)" role="tabpanel" aria-labelledby="tab-label-<?= /* @noEscape */ $alias ?>" tabindex="0">
         <?= /* @noEscape */ $_tab['is_ajax'] ? $loader->getHtml() : $_tab['child_html'] ?>
     </div>
 <?php $index++; endforeach; ?>

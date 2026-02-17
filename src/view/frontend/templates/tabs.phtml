@@ -37,10 +37,9 @@
     $activeTabs = $initOptions['active'] ?? [0];
 ?>
 
-<div id="<?= $htmlId ?>" class="product info detailed relative">
+<div id="<?= /* @noEscape */ $htmlId ?>" class="product info detailed relative">
     <style>
         #<?= /* @noEscape */ $htmlId ?> #customer-review-list { padding-top: 0; }
-        #<?= /* @noEscape */ $htmlId ?> #customer-review-list > :first-child { display: none; }
         #<?= /* @noEscape */ $htmlId ?> :is(.tab-label, .tabs-toolbar-item) .counter::before { content: '('; }
         #<?= /* @noEscape */ $htmlId ?> :is(.tab-label, .tabs-toolbar-item) .counter::after { content: ')'; }
         #<?= /* @noEscape */ $htmlId ?> section.my-12 { margin-top: 0; margin-bottom: 0; }
@@ -83,8 +82,8 @@
         <?php if ($listenProductTabs = $block->getListenProductTabs()): ?>
         window.addEventListener('configurable-selection-changed', (event) => {
             const productId = event.detail.productIndex;
-            const aliases = <?= json_encode($listenProductTabs) ?>;
-            const url = <?= json_encode($block->getAjaxUrl('tab_alias')) ?>;
+            const aliases = <?= /* @noEscape */ json_encode($listenProductTabs) ?>;
+            const url = <?= /* @noEscape */ json_encode($block->getAjaxUrl('tab_alias')) ?>;
             const easytabsComponent = Alpine.evaluate(document.querySelector('#<?= /* @noEscape */ $htmlId ?> .product.data.items'), '$data');
             const tabs = document.querySelectorAll('.product.data.items .tab-label');
 
@@ -99,7 +98,7 @@
 
         });
         <?php endif; ?>
-        Alpine.data('swissupEasytabs<?= $uniqueId ?>', () => ({
+        Alpine.data('swissupEasytabs<?= /* @noEscape */ $uniqueId ?>', () => ({
             activeTab: [<?= /* @noEscape */ implode(',', $activeTabs) ?>]<?php if ($hasAjaxTabs || $listenProductTabs) :?>,
             isLoading: false,
             fetchTabContent(url) {

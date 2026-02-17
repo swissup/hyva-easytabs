@@ -25,7 +25,7 @@
                 type="button"
                 class="tab-label w-full text-left py-4 px-4 font-semibold focus:outline-none flex justify-between items-center"
                 :class="activeTab.includes(<?= /* @noEscape */ $index ?>) ? 'text-primary' : 'text-gray-700'"
-                @click="activeTab.includes(<?= /* @noEscape */ $index ?>) ? activeTab = activeTab.filter(i => i !== <?= $index ?>) : <?php if ($isMultipleCollapsible): ?>activeTab.push(<?= /* @noEscape */ $index ?>)<?php else: ?>activeTab = [<?= /* @noEscape */ $index ?>]<?php endif; ?>;<?php if ($_tab['is_ajax']): ?> updateTabContent($event.target);<?php endif; ?> setTimeout(() => { document.getElementById('<?= /* @noEscape */ $alias ?>').scrollIntoView({behavior: 'smooth', block: 'nearest'}); }, 200);"
+                @click="activeTab.includes(<?= /* @noEscape */ $index ?>) ? activeTab = activeTab.filter(i => i !== <?= /* @noEscape */ $index ?>) : <?php if ($isMultipleCollapsible): ?>activeTab.push(<?= /* @noEscape */ $index ?>)<?php else: ?>activeTab = [<?= /* @noEscape */ $index ?>]<?php endif; ?>;<?php if ($_tab['is_ajax']): ?> updateTabContent($event.target);<?php endif; ?> setTimeout(() => { document.getElementById('<?= /* @noEscape */ $alias ?>').scrollIntoView({behavior: 'smooth', block: 'nearest'}); }, 200);"
                 id="tab-label-<?= /* @noEscape */ $alias ?>"
                 aria-controls="<?= /* @noEscape */ $alias ?>"
                 :aria-expanded="activeTab.includes(<?= /* @noEscape */ $index ?>) ? 'true' : 'false'"

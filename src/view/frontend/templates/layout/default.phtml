@@ -29,8 +29,8 @@
             role="tab"
             aria-selected="<?= /* @noEscape */ ($index === 0) ? 'true' : 'false' ?>"
             <?php if ($_tab['is_ajax']): ?>data-ajaxurl="<?= $escaper->escapeHtmlAttr($block->getAjaxUrl($alias)) ?>"<?php endif; ?>
-            :selected="activeTab.includes(<?= $index ?>)">
-            <?= $block->stripTags($_tab['title']) ?>
+            :selected="activeTab.includes(<?= /* @noEscape */ $index ?>)">
+            <?= $escaper->escapeHtml($_tab['title']) ?>
         </option>
     <?php $index++; endforeach; ?>
     </select>
