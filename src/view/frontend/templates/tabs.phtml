@@ -1,40 +1,42 @@
 <?php
-    /** @var \Magento\Framework\Escaper $escaper */
-    /** @var \Swissup\Easytabs\Block\Tabs $block */
 
-    $tabs = $block->prepareTabsData();
-    if (!$tabs) {
-        return;
-    }
+declare(strict_types=1);
 
-    $uniqueId = uniqid();
-    $htmlId = 'swissup-easytabs-' . $uniqueId;
-    $tabsLayoutType = $block->getTabsLayoutType();
-    $isCollapsed = false;
-    $isExpanded = false;
-    $isAccordion = false;
-    $isDefault = false;
-    switch ($tabsLayoutType) {
-        case 'collapsed':
-            $isCollapsed = true;
-            break;
-        case 'expanded':
-            $isExpanded = true;
-            break;
-        case 'accordion':
-            $isAccordion = true;
-            break;
-        default:
-            $isDefault = true;
-            break;
-    }
+/** @var \Magento\Framework\Escaper $escaper */
+/** @var \Swissup\Easytabs\Block\Tabs $block */
 
-    $hasAjaxTabs = in_array(true, array_column($tabs, 'is_ajax'));
-    $initOptions = json_decode($block->getInitOptions(), true);
-    if (isset($initOptions['active']) && is_string($initOptions['active'])) {
-        $initOptions['active'] = explode(',', $initOptions['active']);
-    }
-    $activeTabs = $initOptions['active'] ?? [0];
+$tabs = $block->prepareTabsData();
+if (!$tabs) {
+    return;
+}
+
+$uniqueId = uniqid();
+$htmlId = 'swissup-easytabs-' . $uniqueId;
+$tabsLayoutType = $block->getTabsLayoutType();
+$isCollapsed = false;
+$isExpanded = false;
+$isAccordion = false;
+$isDefault = false;
+switch ($tabsLayoutType) {
+    case 'collapsed':
+        $isCollapsed = true;
+        break;
+    case 'expanded':
+        $isExpanded = true;
+        break;
+    case 'accordion':
+        $isAccordion = true;
+        break;
+    default:
+        $isDefault = true;
+        break;
+}
+
+$hasAjaxTabs = in_array(true, array_column($tabs, 'is_ajax'));
+$initOptions = json_decode($block->getInitOptions(), true);
+if (isset($initOptions['active']) && is_string($initOptions['active'])) {
+    $initOptions['active'] = explode(',', $initOptions['active']);
+}
 ?>
 
 <div id="<?= /* @noEscape */ $htmlId ?>" class="product info detailed relative">
@@ -77,74 +79,8 @@
     </div>
 </div>
 
-<script>
-    document.addEventListener('alpine:init', () => {
-        <?php if ($listenProductTabs = $block->getListenProductTabs()): ?>
-        window.addEventListener('configurable-selection-changed', (event) => {
-            const productId = event.detail.productIndex;
-            const aliases = <?= /* @noEscape */ json_encode($listenProductTabs) ?>;
-            const url = <?= /* @noEscape */ json_encode($block->getAjaxUrl('tab_alias')) ?>;
-            const easytabsComponent = Alpine.evaluate(document.querySelector('#<?= /* @noEscape */ $htmlId ?> .product.data.items'), '$data');
-            const tabs = document.querySelectorAll('.product.data.items .tab-label');
-
-            tabs && (async () => {
-                for (const tab of tabs) {
-                    const alias = tab.id.replace('tab-label-', '');
-                    if (!aliases.includes(alias)) continue;
-                    tab.dataset.ajaxurl = url.replace('/tab_alias/', `/${alias}/`).replace('/id/', '/parent_id/') + `id/${productId}/`;
-                    await easytabsComponent.updateTabContent?.(tab);
-                }
-            })();
-
-        });
-        <?php endif; ?>
-        Alpine.data('swissupEasytabs<?= /* @noEscape */ $uniqueId ?>', () => ({
-            activeTab: [<?= /* @noEscape */ implode(',', $activeTabs) ?>]<?php if ($hasAjaxTabs || $listenProductTabs) :?>,
-            isLoading: false,
-            fetchTabContent(url) {
-                return fetch(url, {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-Requested-With': 'XMLHttpRequest'
-                    }
-                }).then(response => response.text());
-            },
-            processScripts(html) {
-                const tempDiv = document.createElement('div');
-                tempDiv.innerHTML = html;
-                const scripts = tempDiv.querySelectorAll('script:not([type="text/x-magento-init"]');
-                scripts.forEach(script => {
-                    if (script.type && script.type !== 'text/javascript') return;
-                    const newScript = document.createElement('script');
-                    newScript.textContent = script.textContent;
-                    document.body.appendChild(newScript);
-                    script.remove();
-                });
-
-                return tempDiv.innerHTML;
-            },
-            async updateTabContent(tab) {
-                const { ajaxurl } = tab.dataset;
-                if (!ajaxurl || this.isLoading) return;
-                this.isLoading = true;
-                const panel = tab.ariaControlsElements?.[0] || document.getElementById(tab.id.replace('tab-label-', ''));
-                const content = await this.fetchTabContent(ajaxurl);
-                const processedContent = this.processScripts(content);
-                panel.innerHTML = processedContent;
-                delete tab.dataset.ajaxurl;
-                this.isLoading = false;
-            },
-            init() {
-                const tabs = this.$root.querySelectorAll('.tab-label');
-                const activeTab = this.activeTab.map(index => tabs[index]).filter(Boolean);
-                (async () => {
-                    for (const tab of activeTab) {
-                        await this.updateTabContent(tab);
-                    }
-                })();
-            }
-            <?php endif; ?>
-        }));
-    });
-</script>
+<?= $block
+    ->assign('uniqueId', $uniqueId)
+    ->assign('initOptions', $initOptions)
+    ->assign('hasAjaxTabs', $hasAjaxTabs)
+    ->fetchView($block->getTemplateFile('tabs/script.phtml')); ?>
