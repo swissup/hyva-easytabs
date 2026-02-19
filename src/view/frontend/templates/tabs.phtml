@@ -79,7 +79,7 @@ if (isset($initOptions['active']) && is_string($initOptions['active'])) {
     </div>
 </div>
 
-<?= $block
+<?= /* @noEscape */ $block
     ->assign('uniqueId', $uniqueId)
     ->assign('initOptions', $initOptions)
     ->assign('hasAjaxTabs', $hasAjaxTabs)
