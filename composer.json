@@ -2,7 +2,7 @@
     "name": "swissup/hyva-easytabs",
     "description": "Hyvä Themes Compatibility module for Swissup_Easytabs",
     "type": "magento2-module",
-    "version": "1.1.1",
+    "version": "1.1.2",
     "require": {
         "magento/framework": "*",
         "hyva-themes/magento2-compat-module-fallback": "*",
