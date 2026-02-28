@@ -1,4 +1,4 @@
-# magento2-swissup-easytabs
+# hyva-swissup-easytabs
 
 Hyvä Themes Compatibility module for Swissup_Easytabs
  
@@ -7,7 +7,7 @@ Hyvä Themes Compatibility module for Swissup_Easytabs
 ```bash
 cd <magento_root>
 composer config repositories.swissup composer https://docs.swissuplabs.com/packages/
-composer require hyva-themes/magento2-swissup-easytabs
+composer require swissup/hyva-easytabs
 ```
 
 ## Configure tabs
