@@ -17,7 +17,7 @@
     $isMultipleCollapsible = $initOptions['multipleCollapsible'] ?? false;
 ?>
 
-<div class="accordion" role="tablist" aria-label="Accordion Tabs">
+<div class="accordion" aria-label="Accordion Tabs">
     <?php $index = 0; foreach ($tabs as $_tab) : ?>
         <?php $alias = $escaper->escapeHtmlAttr($_tab['alias']); ?>
         <div class="border-b border-gray-200">
@@ -43,7 +43,6 @@
                 id="<?= /* @noEscape */ $alias ?>"
                 x-show="activeTab.includes(<?= /* @noEscape */ $index ?>)"
                 class="p-4 bg-gray-50"
-                role="tabpanel"
                 aria-labelledby="tab-label-<?= /* @noEscape */ $alias ?>"
                 tabindex="0"
                 data-role="content"<?php if (!in_array($index, $activeTabs)) : ?>
