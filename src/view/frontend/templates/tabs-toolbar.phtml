@@ -1,30 +1,33 @@
-<?php
-    declare(strict_types=1);
+<?php declare(strict_types=1);
 
-    use Magento\Framework\Escaper;
-    use Swissup\Easytabs\Block\Tabs;
+use Magento\Framework\Escaper;
+use Swissup\Easytabs\Block\Tabs;
 
-    /** @var Tabs $block */
-    /** @var Escaper $escaper */
-    /** @var array $tabs */
+/** @var Tabs $block */
+/** @var Escaper $escaper */
+/** @var array $tabs */
 
-    $firstAlias = $escaper->escapeHtmlAttr($tabs[0]['alias']);
-    $collideObject = implode(', ', array_map(
-        fn($tab) => "'" . $escaper->escapeHtmlAttr($tab['alias']) . "': false",
-        $tabs
-    ));
+$firstAlias = $escaper->escapeHtmlAttr($tabs[0]['alias']);
+$collideObject = implode(', ', array_map(
+    fn($tab) => "'" . $escaper->escapeHtmlAttr($tab['alias']) . "': false",
+    $tabs
+));
 ?>
 
+<script src="<?= $escaper->escapeUrl($block->getViewFileUrl('Swissup_HyvaEasytabs::js/tabs-toolbar.js')) ?>" defer></script>
+
 <div class="tabs-toolbar sticky top-0 z-10 flex bg-container"
-    x-data="{ collide: { <?= /* @noEscape */ $collideObject ?> } }"
->
-<?php $index = 0; foreach ($tabs as $tab): $alias = $escaper->escapeHtmlAttr($tab['alias']); ?>
-    <a class="tabs-toolbar-item flex-1 text-center py-2 px-4 font-semibold border-b-2 truncate focus:outline-none"
-        :class="(Object.keys(collide).filter(v => collide[v]).pop() ?? '<?= /* @noEscape */ $firstAlias?>') === '<?= /* @noEscape */ $alias ?>' ? 'border-primary text-primary' : 'text-gray-400 border-transparent hover:border-gray-300'"
-        @click.prevent="const panel = document.getElementById('<?= /* @noEscape */ $alias ?>'); panel.style.scrollMarginTop = event.target.clientHeight + 'px'; panel.scrollIntoView({behavior: 'smooth', block: 'nearest'});"
-        @scroll.window="const panelRect = document.getElementById('<?= /* @noEscape */ $alias ?>').getBoundingClientRect(); const toolbarItemRect = $root.querySelectorAll('.tabs-toolbar-item')[<?= /* @noEscape */ $index ?>].getBoundingClientRect(); collide['<?= /* @noEscape */ $alias ?>'] = panelRect.top <= toolbarItemRect.bottom && panelRect.bottom >= toolbarItemRect.top;"
-        href="#<?= /* @noEscape */ $alias ?>">
-        <?= $escaper->escapeHtml($tab['title'], ['span']) ?>
-    </a>
-<?php $index++; endforeach; ?>
+    x-data="hyvaTabsToolbar({ <?= /* @noEscape */ $collideObject ?> }, '<?= /* @noEscape */ $firstAlias ?>')">
+    <?php foreach ($tabs as $tab):
+        $alias = $escaper->escapeHtmlAttr($tab['alias']); ?>
+        <a href="#<?= /* @noEscape */ $alias ?>"
+            class="tabs-toolbar-item flex-1 text-center py-2 px-4 font-semibold border-b-2 truncate focus:outline-none transition-all duration-200"
+            :class="isActive('<?= /* @noEscape */ $alias ?>') 
+               ? 'active border-primary text-primary'
+               : 'text-gray-400 border-transparent hover:border-gray-300'"
+            @click.prevent="scrollToPanel('<?= /* @noEscape */ $alias ?>')"
+            @scroll.window="checkCollision('<?= /* @noEscape */ $alias ?>')">
+            <?= $escaper->escapeHtml($tab['title'], ['span']) ?>
+        </a>
+    <?php endforeach; ?>
 </div>

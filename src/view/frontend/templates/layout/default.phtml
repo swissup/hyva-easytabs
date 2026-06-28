@@ -22,7 +22,7 @@
         aria-label="Tabs"
     >
     <?php $index = 0; foreach ($tabs as $_tab) : ?>
-        <?php $alias = $block->escapeHtmlAttr($_tab['alias']); ?>
+        <?php $alias = $escaper->escapeHtmlAttr($_tab['alias']); ?>
         <option value="<?= /* @noEscape */$index ?>" 
             id="tab-label-<?= /* @noEscape */ $alias ?>"
             aria-controls="<?= /* @noEscape */ $alias; ?>"
