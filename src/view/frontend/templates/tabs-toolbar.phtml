@@ -7,7 +7,7 @@ use Swissup\Easytabs\Block\Tabs;
 /** @var Escaper $escaper */
 /** @var array $tabs */
 
-$firstAlias = $escaper->escapeHtmlAttr($tabs[0]['alias']);
+$firstAlias = reset($tabs)['alias'];
 $collideObject = implode(', ', array_map(
     fn($tab) => "'" . $escaper->escapeHtmlAttr($tab['alias']) . "': false",
     $tabs
